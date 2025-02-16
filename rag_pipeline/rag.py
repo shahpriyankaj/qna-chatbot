@@ -1,3 +1,4 @@
+'''RAG functions to retreive the documents from faiss vectorstore using semantic search, create embeddings of user query and generate response using LLM.'''
 from langchain.vectorstores import FAISS
 from utils import embeddings
 from llama_cpp import Llama
@@ -6,6 +7,7 @@ import json
 
 
 class RAG:
+    # RAG class to initialize the model and create the prompt and generate the response.
     def __init__(self):
         #Load Faiss index (vector store)
         self.embedder = embeddings.Embeddings()
@@ -51,6 +53,10 @@ class RAG:
     
 
     def generate_response_for_evaluation(self, query):
+        """
+        The seperate function created for evaluation since the generate_response() is called from API to generate streaming response. 
+        Additionally, for evaluation, we also need context to evaluate RAGA score which is not required in this prototype. But the context can be added to give top K chunks LLM used to generate the response. 
+        """
         context, final_prompt = self.get_embeddings_and_prompt(query)
         response = self.llm(
                 prompt=final_prompt,
@@ -65,6 +71,9 @@ class RAG:
     
 
     def generate_response(self, query):
+        '''
+        This function is used to generate the streaming response and is invoked from API
+        '''
         context, final_prompt = self.get_embeddings_and_prompt(query)
         #Generate response using LLM and stream the output as it generates.
         for chunk in self.llm(

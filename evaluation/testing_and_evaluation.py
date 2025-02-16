@@ -1,5 +1,5 @@
 
-import pandas as pd
+'''Scripts for evaluating the chatbot's performance.'''
 from rag_pipeline import rag
 from evaluation import evaluation_matrics
 import time
@@ -37,16 +37,6 @@ def load_golden_examples():
             "Patients with HER-2/neu amplification may benefit from HER-2-targeted therapies, influencing treatment protocols."
         ]
     }
-    '''
-    data = {
-        "questions": [
-            "What is the HER-2/neu oncogene?",
-        ],
-        "golden_responses": [
-            "The HER-2/neu oncogene encodes a protein involved in cell growth and division. Its amplification is linked to aggressive breast cancer forms.",
-        ]
-    }
-    '''
     golden_examples = pd.DataFrame(data)
     print(golden_examples)
     return golden_examples
@@ -71,25 +61,25 @@ def run_test_set(test_queries):
 
 
 def main():
+    ''' This will run the entire testing & evaluation pipeline'''
     testing_dataset = load_golden_examples()
-    #testing_dataset['generated_contexts'] , testing_dataset['generated_responses'], testing_dataset['response_time']  = run_test_set(testing_dataset['questions'])
-    testing_dataset['generated_responses'] = testing_dataset['golden_responses']
-    testing_dataset['generated_contexts'] = testing_dataset['golden_responses']
-    testing_dataset['response_time'] = 0
-
-    testing_dataset['generated_contexts'] = testing_dataset['generated_contexts'].apply(lambda x: x.split("\n"))
+    testing_dataset['generated_contexts'] , testing_dataset['generated_responses'], testing_dataset['response_time']  = run_test_set(testing_dataset['questions'])
     
-    #testing_dataset['golden_responses'] = testing_dataset['golden_responses'].apply(lambda x: [x])
-    questions = testing_dataset['questions'].tolist()
+    # Evaluate the offline metrics
     generated_responses = testing_dataset['generated_responses'].tolist()
     golden_responses = testing_dataset['golden_responses'].tolist()
-    generated_contexts = testing_dataset['generated_contexts'].tolist()
-
     testing_dataset['bleu_score'] = evaluation_matrics.evaluate_bleu(generated_responses, golden_responses)
     testing_dataset['rouge_score'] = evaluation_matrics.evaluate_rouge(generated_responses, golden_responses)
+
+    # Calculate RAGA score. I commented the code as I was getting some errors.
+    testing_dataset['generated_contexts'] = testing_dataset['generated_contexts'].apply(lambda x: x.split("\n"))
+    questions = testing_dataset['questions'].tolist()
+    generated_contexts = testing_dataset['generated_contexts'].tolist()
+    #testing_dataset['golden_responses'] = testing_dataset['golden_responses'].apply(lambda x: [x])
     #raga_df = evaluation_matrics.evaluate_raga(questions, generated_responses, generated_contexts, golden_responses)
     #evaluation_df = pd.concat([testing_dataset, raga_df], axis=1)
     
+    # Evaluate the Business (Online) metrics
     accuracy = evaluation_matrics.evaluate_accuracy(generated_responses, golden_responses)
     satisfaction_score = evaluation_matrics.calculate_user_satisfaction_score()
     avg_response_time = testing_dataset['response_time'].mean()

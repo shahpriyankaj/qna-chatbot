@@ -1,6 +1,7 @@
-from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
+''' Script to calculate different kind of evaluation metrics'''
+from sklearn.metrics import  accuracy_score
+from rouge_score import rouge_scorer
 from datasets import Dataset
-import nltk
 import sqlite3
 from ragas import evaluate
 from ragas.metrics import (
@@ -9,51 +10,24 @@ from ragas.metrics import (
     context_recall,
     context_precision,
 )
-from evaluate import load
-# Load the ROUGE metric
 import evaluate
-rouge = evaluate.load('rouge')
 
 def evaluate_bleu(predictions, references):
+    ''' Evaluate bleu score  and returns the row-wise score'''
     if len(references) != len(predictions):
         raise ValueError("The number of reference texts must match the number of predicted texts.")
     
-    from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction, corpus_bleu
-    #weights = (0.25, 0.25, 0, 0)  # Weights for uni-gram, bi-gram, tri-gram, and 4-gram
-    #bleu = nltk.translate.bleu_score.sentence_bleu(ref, pred, weights=weights)
-    # Assuming predictions and references are lists of text
-    #bleu_scores = [nltk.translate.bleu_score.sentence_bleu([ref.split()], pred.split()) for pred, ref in zip(predictions, references)]
-    #bleu_scores = [nltk.translate.bleu_score.corpus_bleu([ref.split()], pred.split()) for pred, ref in zip(predictions, references)]
-    #avg_bleu = sum(bleu_scores) / len(bleu_scores)
-    # Initialize an empty list to store BLEU scores
     bleu_scores = []
-
     # Loop through each pair of predicted and reference sentences
     for pred, ref in zip(predictions, references):
-        #ref_tokenized = [ref.split()]  # Tokenize reference and nest in a list
-        #pred_tokenized = pred.split()  # Tokenize prediction
-        #print(ref_tokenized)
-        #print(pred_tokenized)
         sacrebleu = evaluate.load("sacrebleu")
         score = sacrebleu.compute(predictions=predictions, references=references)
-        #smoother = SmoothingFunction().method1
-        #score = sentence_bleu(ref_tokenized, pred_tokenized, smoothing_function=smoother)  # Compute BLEU score
-        #score = corpus_bleu(ref_tokenized, pred_tokenized)
-        bleu_scores.append(round(score["score"], 1))  # Store the result
+        bleu_scores.append(round(score["score"], 1)) 
 
     return bleu_scores
 
 
 def evaluate_rouge(predictions, references, rouge_types=('rouge1', 'rougeL')):
-    results = rouge.compute(predictions=predictions, references=references)
-    scores = []
-
-    # Iterate over the results and store the scores for each prediction
-    '''
-    for i in enumerate(zip(predictions, references)):      
-        scores.append(results['rouge1'][i].fmeasure ) # Access per-row F1 score
-    '''
-    from rouge_score import rouge_scorer
     """
     Calculates ROUGE scores for each record in a list of reference and predicted texts.
 
@@ -66,6 +40,7 @@ def evaluate_rouge(predictions, references, rouge_types=('rouge1', 'rougeL')):
         A list of dictionaries, where each dictionary contains the ROUGE scores 
         for a single record.
     """
+    scores = []
     if len(references) != len(predictions):
         raise ValueError("The number of reference texts must match the number of predicted texts.")
 
@@ -77,7 +52,6 @@ def evaluate_rouge(predictions, references, rouge_types=('rouge1', 'rougeL')):
         all_scores.append(scores)
     
     return all_scores
-    #return results
 
 
 def evaluate_accuracy(predictions, references):
@@ -90,6 +64,7 @@ def evaluate_accuracy(predictions, references):
 
 
 def evaluate_raga(questions, answers, contexts, ground_truths):
+    '''evaluate raga score and returns the row-wise score'''
     data = {
     "user_input": questions,
     "response": answers,

@@ -1,3 +1,4 @@
+'''Streamlit frontend for interacting with the chatbot.'''
 import streamlit as st
 import requests
 import json

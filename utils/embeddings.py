@@ -1,3 +1,4 @@
+'''Utility functions for creating embeddings'''
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 

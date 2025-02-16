@@ -1,0 +1,3 @@
+from data_pipeline import documents_processing
+
+documents_processing.documents_processing()
