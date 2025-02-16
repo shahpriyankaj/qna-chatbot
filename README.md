@@ -115,12 +115,10 @@ python evaluation.py
 ![Alt Text](images/qna_chat_fastapi_swaggerUI.png)
 - <b>UI Testing:</b>
 ![Alt Text](images/qna_chatbot_streatlit_ui.png)
-- <b>Streaming response showns in UI 
-<video width="600" controls>
-  <source src="images/Streaming_response_generation.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-If video is not running, check in images/ folder
+- <b>Streaming response showns in UI
+[Watch the video](images/Streaming_response_generation.mp4)
+
+If you can't view the videw, download it from images/ folder.
 - <b>Using testing_and_evaluation file:</b> The testing can be done using pre-defined questions present in evaluation.testing_and_evaluation file. Call load_golden_examples() from this file to load 10 question and answer. 
 
 ### Assumption and future enhancements
