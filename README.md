@@ -116,7 +116,7 @@ python evaluation.py
 ![Alt Text](images/qna_chat_fastapi_swaggerUI.png)
 - <b>UI Testing:</b>
 ![Alt Text](images/qna_chatbot_streatlit_ui.png)
-- <b>Streaming response showns in UI/Demo
+- <b>Streaming response showns in UI/Demo</b>
 [Watch the video](images/Streaming_response_generation.mp4)
 
 If you can't view the video, download it from images/ folder.
