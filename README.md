@@ -1,5 +1,5 @@
 # QnA Chatbot
-This project builds a QnA chatbot using a <b>Retrieval-Augmented Generation (RAG)</b> approach. 
+A QnA chatbot using a <b>Retrieval-Augmented Generation (RAG)</b> approach. 
 
 ### Architecture
 ![Alt Text](images/simple_rag_pipeline.png)
@@ -10,7 +10,7 @@ image source: https://medium.com/@drjulija/what-is-retrieval-augmented-generatio
 2. <b>Data Retrieval & Generation:T</b> It takes the user query as input and creates the embeddings. Using semantic search, get the top 3 chunks from vectorstore and generates the response using LLM and sends back the response. The prompt to LLM is generated using system prompt, context and a question. The RAG pipeline is encompassed into Rest API and integreated into QnA chatbot UI for question and answering.
 
 #### Additional Design consideration:
-1. User Interaction such as thumbs-up and thumbs-down are stored into persistent storage to evaluate customer satisfaction store.
+1. Feedback loop (User Interaction) such as thumbs-up and thumbs-down are stored into persistent storage to evaluate customer satisfaction store.
 2. The response from the API is streamed, meaning the user doesn't have to wait for the entire response to be generated. Instead, the UI displays the response as it is being streamed, improving the overall user experience.
 3. <b> MOST IMPORTANT</b>: The entire project was developed and tested on CPU with 16GB RAM. Adding GPU can improve the faster response time.
 
@@ -23,7 +23,7 @@ image source: https://medium.com/@drjulija/what-is-retrieval-augmented-generatio
     - <b>Average Response Time</b>: (Sum of response time of all input questions / total number of questions) * 100
 - Offline Metrics: 
     - <b>Rouge, Bleu, RAGA scores</b> using pre-defined ground truth. This scores are stored per QnA along with questions, actual response, generated response in csv to further evaluation.
-    - <b>Response Time</b>: Stores the time taken to generate the response by RAG
+    - <b>Response Time</b>: Stores the time taken to generate the response of an user query
 
 
 ### Technology Stack:
@@ -35,13 +35,15 @@ image source: https://medium.com/@drjulija/what-is-retrieval-augmented-generatio
 - <b>Front-end framework:T</b> Streamlit
 - <b>Database:T</b> SQLite 3
 - <b>IDE:</b> MS VS Code
+- <b>Version Control:</b> Github
+- <b>Hardware:<b> Windows 11 OS, 16GB RAM, intel i7 - 14 cores processor
 
 ### Reproducability
 - <u>Prerequisites:</u> Before starting, ensure you have Python 3.8+, pip installed
 
 1. Clone the Repository
 ```bash
-git https://github.com/shahpriyankaj/qna-chatbot.git
+git clone https://github.com/shahpriyankaj/qna-chatbot.git
 cd qa-chatbot
 ```
 2. Create a Virtual Environment
@@ -53,13 +55,12 @@ venv\Scripts\activate #On Unix, source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 '''
-To download the LLM Model, do the following and copy the model to /model directory OR 
-#from https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF/blob/main/llama-2-7b-chat.Q4_K_M.gguf -> download the model in /model directory
+To download the LLM Model, perform the following steps and copy the model to /model directory OR from https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF/blob/main/llama-2-7b-chat.Q4_K_M.gguf -> download the model to /model directory
 '''
 pip3 install huggingface-hub>=0.17.1
 huggingface-cli download TheBloke/Llama-2-7B-Chat-GGUF llama-2-7b-chat.Q4_K_M.gguf --local-dir . --local-dir-use-symlinks False
 ```
-If you face any issue with llama-cpp-python package, Try following:
+The llama-cpp-python package is used in RAG implementation. In case, you face any issue with llama-cpp-python package while running the scripts, Try following:
 - running set CMAKE_ARGS=-DLLAMA_AVX2=ON
 - try following commands on cmd
 ```bash
@@ -98,16 +99,16 @@ python evaluation.py
 - <b>data/:</b> Directory to store the raw documents. Generally in a company, the documents are retrieved using API or stored in knowledge base.
 - <b>data_pipeline/:</b> Document ingestion pipeline to store the embeddings into faiss vector store. Generally, in a company, there are multiple types of documents such as ppt, txt, web pages, pdf, json, doc, excel, etc. There are different langchain loaders to support and load various documents types. 
 - <b>data_ingestion.py</b>: This is the script to run the data processing pipeline. In a company, generally the data processing to store the embeddings are scheduled as a job. 
-- <b>app.py:</b> Streamlit frontend for interacting with the chatbot. Generally in a company, the UI is designed based on business requirements and company's UI/UX design patterns. This file also connects the SQLite to store the thumbs-up and thumbs-down interaction.
+- <b>app.py:</b> Streamlit frontend for interacting with the chatbot. Generally in a company, the UI is designed based on business requirements and company's UI/UX design patterns. This file also connects the SQLite to store the thumbs-up and thumbs-down interaction for a feedback loop.
 - <b>main.py:</b> FastAPI backend providing the QnA API. Generally in a company, the API can have multiple features as well as error handling and it should return HTTP codes/error message during API failures. 
 - <b>utils/:</b> Utility functions for creating embeddings
 - <b>rag/:</b> RAG functions to retreive the documents from faiss vectorstore using semantic search, create embeddings of user query, create the prompt for LLM and generate response.
 - <b>evaluation/:</b> Scripts for evaluating the chatbot's performance. The golden examples are stores in pandas df currently, but this can be further improved by adding into persistent storage. As well as, the automated evaluation script can be integrated into a company's CI-CD pipeline to compare with benchmark before the deployment. 
-- <b> evaluation.py </b>: This script is just to run the testing and evaluation. Generally, in a company, this can be integrated into a company's CI-CD pipeline
+- <b>evaluation.py </b>: This script is just to run the testing and evaluation. Generally, in a company, this can be integrated into a company's CI-CD pipeline
 - <b>model/:</b> It stores the faiss vectorstore as well as the LLM model
 - <b>requirements.txt:</b> All the Python dependencies needed for the project.
 - <b>qna_interactions.db:</b> It is a SQLite persistent db to store the thumbs-up/thumbs-down user interactions.
-- <b>images/:</b> To store relavant images to explain the project
+- <b>images/:</b> To store relavant images/video to explain the project
 
 
 ### Testing:
@@ -115,20 +116,20 @@ python evaluation.py
 ![Alt Text](images/qna_chat_fastapi_swaggerUI.png)
 - <b>UI Testing:</b>
 ![Alt Text](images/qna_chatbot_streatlit_ui.png)
-- <b>Streaming response showns in UI
+- <b>Streaming response showns in UI/Demo
 [Watch the video](images/Streaming_response_generation.mp4)
 
-If you can't view the videw, download it from images/ folder.
+If you can't view the video, download it from images/ folder.
 - <b>Using testing_and_evaluation file:</b> The testing can be done using pre-defined questions present in evaluation.testing_and_evaluation file. Call load_golden_examples() from this file to load 10 question and answer. 
 
 ### Assumption and future enhancements
-- Since the lack of GPU, the chatbot is running extremely slow on CPU with 16GB RAM. Hence, it has high latency. This can be improved by adding GPU for faster processing. 
-- The chatbot will only handle one request at a time. Multiple API requests will throw an error.
-- No error handling & input validation is implemented. The logging module can be added to log the errors. Additionally, the API should be able to return HTTP error codes in case of failure and log appropriate exception.
+- Since the lack of GPU, the chatbot is running extremely slow on CPU with 16GB RAM. Hence, it has high latency. This can be improved by adding GPU for faster processing. The embedding and chat models' configurations must change in the codebase to run on GPU, currently GPU config is disabled.
+- The chatbot will only handle one request at a time. Multiple API requests will throw an error. This can be handled by hosting the application on kubernetes for ehanced scalability and throughput.
+- No error handling & input validation is implemented in the prototype. The logging module can be added to log the errors. Additionally, the API should be able to return HTTP error codes in case of failure and log appropriate exception.
 - The open source sentence-transformers/all-MiniLM-l6-v2 and Llama 2 7b chat models from Hugging Face are used in the project as both have better performance in terms of creating embedding as well generating response for chatbot
 - The FAISS vectorstore was chosen due to Efficient similarity search, GPU support and scalability. This can be replaced by other vector database to store embeddings, its metadata, etc. The metadata will be helpful to show the chunks used to generate the response by LLM in the UI to improve intepretability, truthfulness and user trust.
-- SQLite3 was chosen to store the user interaction. This can be replaced by other database based on company's techstack
-- Preprocessing of documents, chunking strategy, similarity search and ranking of documents, prompts as well as adding more evaluation metrics can be done in future for further improvements.
+- SQLite3 was chosen to store the user interaction/feedback/conversation history, etc. This can be replaced by other database based on company's techstack.
+- Preprocessing of documents, chunking strategy, similarity search and (re)ranking of documents, prompts as well as adding other relevant evaluation metrics can be done in future for further improvements.
 
 ## Research Review
 Link: https://github.com/mims-harvard/Clinical-knowledge-embeddings
