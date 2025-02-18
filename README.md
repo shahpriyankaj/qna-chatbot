@@ -36,7 +36,7 @@ image source: https://medium.com/@drjulija/what-is-retrieval-augmented-generatio
 - <b>Database:T</b> SQLite 3
 - <b>IDE:</b> MS VS Code
 - <b>Version Control:</b> Github
-- <b>Hardware:<b> Windows 11 OS, 16GB RAM, intel i7 - 14 cores processor
+- <b>Hardware:</b> Windows 11 OS, 16GB RAM, intel i7 - 14 cores processor
 
 ### Reproducability
 - <u>Prerequisites:</u> Before starting, ensure you have Python 3.8+, pip installed
