@@ -6,8 +6,8 @@ A QnA chatbot using a <b>Retrieval-Augmented Generation (RAG)</b> approach.
 image source: https://medium.com/@drjulija/what-is-retrieval-augmented-generation-rag-938e4f6e03d1
 
 #### The archiutecture design is divided into two parts:
-1. <b>Data Ingestion pipeline:T</b> It retrieves the document, creates chunks, generates the embeddings and store it into vectorstore.
-2. <b>Data Retrieval & Generation:T</b> It takes the user query as input and creates the embeddings. Using semantic search, get the top 3 chunks from vectorstore and generates the response using LLM and sends back the response. The prompt to LLM is generated using system prompt, context and a question. The RAG pipeline is encompassed into Rest API and integreated into QnA chatbot UI for question and answering.
+1. <b>Data Ingestion pipeline:</b> It retrieves the document, creates chunks, generates the embeddings and store it into vectorstore.
+2. <b>Data Retrieval & Generation:</b> It takes the user query as input and creates the embeddings. Using semantic search, get the top 3 chunks from vectorstore and generates the response using LLM and sends back the response. The prompt to LLM is generated using system prompt, context and a question. The RAG pipeline is encompassed into Rest API and integreated into QnA chatbot UI for question and answering.
 
 #### Additional Design consideration:
 1. Feedback loop (User Interaction) such as thumbs-up and thumbs-down are stored into persistent storage to evaluate customer satisfaction store.
